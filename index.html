@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#faf5ee">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Sweet Spot · Court</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Sweet Spot — Court's personal flight-deal radar: American + Oneworld out of Dallas, watching cash and miles for the moment it's worth going.">
+<meta property="og:title" content="Sweet Spot"><meta property="og:description" content="The moment it's worth going — in dollars or miles.">
+<!-- Sweet Spot for Court · web-first, installable as a PWA. M1 Foundation. Sample data now; free-tier sources (seats.aero + fares) plug in at M2. -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23c1715a'/><path d='M50 26 L57 44 L76 45 L61 57 L66 76 L50 65 L34 76 L39 57 L24 45 L43 44 Z' fill='%23faf5ee'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#faf5ee; --paper:#fffdfa; --ink:#332a23; --soft:#6f6459; --muted:#8c7d6b;
+    --card:#ffffff; --rose:#c1715a; --rose-2:#d98c73; --rose-soft:#f6e4da; --gold:#c99a57;
+    --line:#ece2d6; --shadow:0 8px 30px rgba(120,80,55,.09);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{min-height:100%}
+  body{ background:
+      radial-gradient(90% 55% at 88% -8%, #f7e7db 0%, transparent 55%),
+      radial-gradient(70% 40% at 5% 0%, #f3ece0 0%, transparent 50%),
+      var(--cream);
+    color:var(--ink); font-family:'DM Sans',system-ui,sans-serif; }
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 24px 60px; }
+
+  /* header */
+  header{ position:sticky; top:0; z-index:20; padding:20px 0 14px;
+    background:linear-gradient(180deg, var(--cream) 72%, transparent); }
+  .bar{ display:flex; align-items:center; justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand .mk{ width:34px;height:34px;border-radius:10px;background:var(--rose);color:var(--cream);
+    display:grid;place-items:center;font-size:16px;box-shadow:0 4px 14px rgba(193,113,90,.3) }
+  .brand .nm{ font-family:'Fraunces',serif; font-size:24px; font-weight:500; letter-spacing:.2px }
+  .who{ display:flex; align-items:center; gap:9px; cursor:pointer }
+  .who .hi{ font-size:13px; color:var(--soft); text-align:right; line-height:1.25 }
+  .who .hi b{ color:var(--ink); font-weight:600 }
+  .who .av{ width:38px;height:38px;border-radius:50%;background:linear-gradient(150deg,var(--rose-2),var(--rose));
+    color:#fff; display:grid; place-items:center; font-family:'Fraunces',serif; font-size:17px; box-shadow:var(--shadow) }
+
+  .lede{ font-family:'Fraunces',serif; font-size:clamp(26px,4.4vw,40px); font-weight:400; line-height:1.08;
+    max-width:620px; margin:18px 0 6px; letter-spacing:-.3px }
+  .lede em{ font-style:italic; color:var(--rose) }
+  .sub{ font-family:'DM Mono',monospace; font-size:12px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase }
+  .pvw{ display:inline-flex; align-items:center; gap:7px; margin-top:12px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.4px; color:var(--rose); background:var(--rose-soft); border:1px solid #eccdbe; padding:6px 12px; border-radius:20px }
+  .pvw::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--rose) }
+
+  /* controls */
+  .controls{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin:22px 0 18px }
+  .tabs{ display:flex; gap:8px }
+  .tab{ font-size:13.5px; font-weight:600; padding:9px 15px; border-radius:22px; color:var(--soft);
+    background:#fff; border:1px solid var(--line); cursor:pointer; box-shadow:0 1px 2px rgba(120,80,55,.03) }
+  .tab.on{ color:#fff; background:var(--rose); border-color:var(--rose) }
+  .worth{ font-family:'DM Mono',monospace; font-size:12.5px; color:var(--rose); cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px; background:var(--rose-soft); padding:9px 14px; border-radius:22px }
+  .worth .g{ font-size:14px }
+
+  /* feed grid — web-first, collapses to one column on phones */
+  .feed{ display:grid; grid-template-columns:repeat(auto-fill, minmax(330px,1fr)); gap:18px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:20px 20px 16px;
+    box-shadow:var(--shadow); position:relative; transition:transform .15s, box-shadow .15s }
+  .card:hover{ transform:translateY(-2px); box-shadow:0 14px 40px rgba(120,80,55,.13) }
+  .card.sweet{ border-color:#eccdbe; box-shadow:0 10px 34px rgba(193,113,90,.14) }
+  .card.sweet::before{ content:""; position:absolute; inset:0; border-radius:20px; pointer-events:none;
+    background:linear-gradient(180deg, rgba(246,228,218,.5), transparent 40%) }
+  .ctop{ display:flex; justify-content:space-between; align-items:flex-start; position:relative }
+  .dest{ font-family:'Fraunces',serif; font-size:27px; font-weight:500; line-height:1 }
+  .route{ font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:7px; letter-spacing:.4px }
+  .dates{ font-size:12.5px; color:var(--soft); margin-top:3px }
+  .badge{ font-family:'DM Mono',monospace; font-size:9.5px; letter-spacing:.8px; text-transform:uppercase;
+    padding:5px 9px; border-radius:8px; white-space:nowrap; position:relative }
+  .badge.sweet{ background:var(--rose); color:#fff; font-weight:600 }
+  .badge.good{ background:var(--rose-soft); color:var(--rose) }
+  .badge.cash{ background:#f0ece5; color:var(--soft) }
+  .grid{ display:grid; grid-template-columns:1fr 1fr auto; gap:12px; margin-top:18px; align-items:end }
+  .grid .k{ font-family:'DM Mono',monospace; font-size:8.5px; letter-spacing:.8px; color:var(--muted); text-transform:uppercase; margin-bottom:4px }
+  .grid .v{ font-size:20px; font-weight:700; line-height:1; font-family:'Fraunces',serif }
+  .grid .v .u{ font-size:10px; color:var(--muted); font-weight:400; font-family:'DM Sans' }
+  .grid .val .v{ color:var(--rose) }
+  .pick{ margin-top:15px; padding-top:13px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center }
+  .pick .rec{ font-size:12.5px; color:var(--soft) } .pick .rec b{ color:var(--ink); font-weight:600 }
+  .pick .go{ font-size:13px; font-weight:600; color:var(--rose); cursor:pointer }
+
+  .foot{ text-align:center; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:34px; letter-spacing:.5px; line-height:1.9 }
+  .foot b{ color:var(--rose) }
+
+  /* settings — modal on desktop, bottom sheet on phone */
+  .scrim{ position:fixed; inset:0; background:rgba(60,40,30,.32); backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:.22s; z-index:40 }
+  .scrim.on{ opacity:1; pointer-events:auto }
+  .sheet{ position:fixed; z-index:50; background:var(--paper); box-shadow:0 30px 80px rgba(80,50,35,.28);
+    left:50%; top:50%; transform:translate(-50%,-46%); opacity:0; pointer-events:none; transition:.24s cubic-bezier(.2,.8,.2,1);
+    width:min(460px, calc(100% - 32px)); border-radius:22px; padding:26px }
+  .sheet.on{ transform:translate(-50%,-50%); opacity:1; pointer-events:auto }
+  .sheet h3{ font-family:'Fraunces',serif; font-weight:500; font-size:22px }
+  .sheet .hint{ font-size:13px; color:var(--soft); margin:2px 0 18px }
+  .set{ margin:18px 0 } .set .lbl{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--rose); text-transform:uppercase; margin-bottom:10px }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px }
+  .chip{ font-size:13px; padding:8px 13px; border-radius:20px; border:1px solid var(--line); color:var(--soft); cursor:pointer; background:#fff }
+  .chip.on{ border-color:var(--rose); color:var(--rose); background:var(--rose-soft) }
+  input[type=range]{ width:100%; accent-color:var(--rose); margin-top:4px }
+  .thr{ display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:12px; color:var(--soft); margin-top:9px } .thr b{ color:var(--rose) }
+  .ptsin{ width:100%; background:#fff; border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:12px 14px; font-size:15px; font-family:'DM Mono',monospace }
+  .done{ width:100%; margin-top:22px; padding:14px; border:0; border-radius:14px; background:var(--rose); color:#fff; font-weight:700; font-size:15px; cursor:pointer; font-family:'DM Sans' }
+
+  a.go{ text-decoration:none }
+  :focus-visible{ outline:2px solid var(--rose); outline-offset:2px; border-radius:8px }
+  [role=button]{ cursor:pointer }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} .card:hover{transform:none} }
+  @media (max-width:560px){
+    .wrap{ padding:0 16px 50px }
+    .sheet{ top:auto; bottom:0; transform:translate(-50%,100%); width:100%; border-radius:22px 22px 0 0 }
+    .sheet.on{ transform:translate(-50%,0) }
+    .who .hi{ display:none }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="bar">
+      <div class="brand"><div class="mk">✦</div><div class="nm">Sweet Spot</div></div>
+      <div class="who" role="button" tabindex="0" aria-label="Open settings" onclick="openSheet()"><div class="hi">Hi, <b>Court</b><br>your radar</div><div class="av">C</div></div>
+    </div>
+    <div class="lede">The moment it's <em>worth going</em> — in dollars or miles.</div>
+    <div class="sub" id="subline">Dallas · American + Oneworld</div>
+    <div class="pvw">Preview · sample deals — real cash &amp; miles switch on at go-live</div>
+
+    <div class="controls">
+      <div class="tabs" id="tabs" role="tablist">
+        <div class="tab on" role="button" tabindex="0" data-f="all">All deals</div>
+        <div class="tab" role="button" tabindex="0" data-f="sweet">Sweet spots</div>
+        <div class="tab" role="button" tabindex="0" data-f="cash">Cash deals</div>
+      </div>
+      <div class="worth" role="button" tabindex="0" aria-label="Adjust your worth-it threshold" onclick="openSheet()"><span class="g">✦</span><span id="worthlbl"></span></div>
+    </div>
+  </header>
+
+  <div class="feed" id="feed"></div>
+  <div class="foot">Sample data — <b>lean mode</b>. Live free-tier sources plug in at Milestone 2.<br>Sweet Spot for Court · built by Phorethought</div>
+</div>
+
+<div class="scrim" id="scrim" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Court's radar settings">
+  <h3>Court's radar</h3>
+  <div class="hint">Tune it to exactly how you travel.</div>
+  <div class="set"><div class="lbl">Home airports</div><div class="chips" id="airports"></div></div>
+  <div class="set"><div class="lbl">Watching</div><div class="chips" id="dests"></div></div>
+  <div class="set"><div class="lbl">AAdvantage miles balance</div><input class="ptsin" id="pts" inputmode="numeric" value="85,000"></div>
+  <div class="set"><div class="lbl">Only tell me when it's worth it</div>
+    <input type="range" id="thr" min="1.0" max="2.5" step="0.1" value="1.5">
+    <div class="thr"><span>Any redemption</span><span>Miles at <b id="thrv">1.5¢</b>/mile or better</span></div>
+  </div>
+  <button class="done" onclick="closeSheet()">Done</button>
+</div>
+
+<script>
+const state = { filter:'all', threshold:1.5, airports:{DFW:true,DAL:false},
+  watching:new Set(['London','Rome','Buenos Aires','Sydney','Tokyo','Madrid','Cancún','Miami']) };
+const MOCK_DEALS = [
+  { dest:'London',       code:'LHR', dates:'Nov 12 – 19', cash:685,  miles:30000, fees:85,  carrier:'AA' },
+  { dest:'Rome',         code:'FCO', dates:'Oct 3 – 12',  cash:890,  miles:44000, fees:90,  carrier:'AA / BA' },
+  { dest:'Buenos Aires', code:'EZE', dates:'Feb 6 – 16',  cash:1120, miles:40000, fees:110, carrier:'AA' },
+  { dest:'Sydney',       code:'SYD', dates:'May 4 – 18',  cash:1520, miles:80000, fees:150, carrier:'Qantas' },
+  { dest:'Tokyo',        code:'HND', dates:'Apr 1 – 10',  cash:1240, miles:70000, fees:120, carrier:'JAL' },
+  { dest:'Madrid',       code:'MAD', dates:'Sep 9 – 18',  cash:612,  miles:34000, fees:95,  carrier:'Iberia' },
+  { dest:'Cancún',       code:'CUN', dates:'Jul 5 – 11',  cash:240,  miles:20000, fees:40,  carrier:'AA' },
+  { dest:'Miami',        code:'MIA', dates:'Aug 2 – 6',   cash:158,  miles:15000, fees:11,  carrier:'AA' },
+];
+
+/* ---- DATA LAYER (M2) ----
+   Default = mock. Go live by setting mode:'live' + the Cloudflare Worker URL (see GO-LIVE.md + worker.js).
+   The Worker holds the seats.aero + fares keys, calls both, merges, and returns this same {dest,code,dates,cash,miles,fees,carrier} shape. */
+const Data = {
+  mode: 'mock',            // 'mock' | 'live'
+  workerURL: '',           // e.g. 'https://sweet-spot.<you>.workers.dev'  (set at go-live)
+  async getDeals(cfg){
+    if (this.mode === 'live' && this.workerURL){
+      try{
+        const dests = [...cfg.watching].join(',');
+        const origin = Object.keys(cfg.airports).filter(a=>cfg.airports[a]).join(',') || 'DFW';
+        const r = await fetch(`${this.workerURL}/deals?origin=${origin}&dests=${encodeURIComponent(dests)}`);
+        if (r.ok){ const d = await r.json(); if (Array.isArray(d) && d.length) return d; }
+      }catch(e){ /* fall back to mock on any failure — never show her a blank screen */ }
+    }
+    return MOCK_DEALS;
+  }
+};
+let DEALS = MOCK_DEALS;
+const value = d => (d.cash - d.fees) / d.miles * 100;
+const sweetLine = () => Math.max(1.8, state.threshold);   // "sweet" always respects Court's bar
+const verdict = d => { const v=value(d); return v>=sweetLine()?'sweet': v>=state.threshold?'good':'cash'; };
+const bookLink = d => 'https://www.google.com/travel/flights?q='+encodeURIComponent('Flights from '+home().split('/')[0]+' to '+d.code);
+const home = () => Object.keys(state.airports).filter(a=>state.airports[a]).join('/') || 'DFW';
+
+const feed = document.getElementById('feed');
+function render(){
+  document.getElementById('subline').textContent = home()+' · American + Oneworld';
+  document.getElementById('worthlbl').textContent = 'Worth it: ≥ '+state.threshold.toFixed(1)+'¢/mile';
+  const rows = DEALS.filter(d=>state.watching.has(d.dest)).map(d=>({d,v:value(d),vd:verdict(d)}))
+    .filter(x=> state.filter==='sweet'?x.vd==='sweet': state.filter==='cash'?x.vd==='cash':true)
+    .sort((a,b)=> a.vd==='cash'? 1 : b.v-a.v);
+  feed.innerHTML = rows.map(({d,v,vd})=>{
+    const badge = vd==='sweet'?'<span class="badge sweet">Sweet spot</span>': vd==='good'?'<span class="badge good">Good value</span>':'<span class="badge cash">Cash is king</span>';
+    const rec = vd==='cash'?'Just <b>pay cash</b> — miles aren\'t worth it here.':'Best move: <b>book with miles</b> ('+v.toFixed(2)+'¢ each).';
+    return `<div class="card ${vd==='sweet'?'sweet':''}">
+      <div class="ctop"><div><div class="dest">${d.dest}</div>
+        <div class="route">${home().split('/')[0]} → ${d.code} · ${d.carrier}</div>
+        <div class="dates">${d.dates} · round trip</div></div>${badge}</div>
+      <div class="grid">
+        <div><div class="k">Cash</div><div class="v">$${d.cash.toLocaleString()}</div></div>
+        <div><div class="k">Miles</div><div class="v">${d.miles/1000}k <span class="u">+ $${d.fees}</span></div></div>
+        <div class="val"><div class="k">Value</div><div class="v">${v.toFixed(1)}<span class="u">¢/mi</span></div></div>
+      </div>
+      <div class="pick"><div class="rec">${rec}</div><a class="go" href="${bookLink(d)}" target="_blank" rel="noopener">Book →</a></div>
+    </div>`;
+  }).join('') || `<div class="foot" style="grid-column:1/-1;margin-top:30px">Nothing matches this filter yet — loosen your "worth it" bar in settings.</div>`;
+}
+const chip=(t,on)=>`<div class="chip ${on?'on':''}" role="button" tabindex="0" aria-pressed="${on}" data-v="${t}">${t}</div>`;
+function buildSheet(){
+  document.getElementById('airports').innerHTML = Object.keys(state.airports).map(a=>chip(a,state.airports[a])).join('');
+  document.getElementById('dests').innerHTML = DEALS.map(d=>chip(d.dest,state.watching.has(d.dest))).join('');
+  document.getElementById('thr').value=state.threshold; document.getElementById('thrv').textContent=state.threshold.toFixed(1)+'¢';
+}
+document.getElementById('airports').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;state.airports[c.dataset.v]=!state.airports[c.dataset.v];c.classList.toggle('on');boot();});
+document.getElementById('dests').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;const d=c.dataset.v;state.watching.has(d)?state.watching.delete(d):state.watching.add(d);c.classList.toggle('on');boot();});
+document.getElementById('thr').addEventListener('input',e=>{state.threshold=parseFloat(e.target.value);document.getElementById('thrv').textContent=state.threshold.toFixed(1)+'¢';render();});
+document.getElementById('tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');state.filter=t.dataset.f;render();});
+function openSheet(){buildSheet();document.getElementById('sheet').classList.add('on');document.getElementById('scrim').classList.add('on');}
+function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('scrim').classList.remove('on');}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeSheet();
+  if((e.key==='Enter'||e.key===' ') && document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('role')==='button'){ e.preventDefault(); document.activeElement.click(); }
+});
+async function boot(){ DEALS = await Data.getDeals(state); render(); }  // load (mock now; Worker when live), then render
+boot();
+</script>
+</body>
+</html>
