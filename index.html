@@ -14,13 +14,14 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="Sweet Spot — Court's personal flight-deal radar: American + Oneworld out of Dallas, watching cash and miles for the moment it's worth going.">
 <meta property="og:title" content="Sweet Spot"><meta property="og:description" content="The moment it's worth going — in dollars or miles.">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="Sweet Spot"><meta name="twitter:description" content="The moment it's worth going — in dollars or miles.">
 <!-- Sweet Spot for Court · web-first, installable as a PWA. M1 Foundation. Sample data now; free-tier sources (seats.aero + fares) plug in at M2. -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23c1715a'/><path d='M50 26 L57 44 L76 45 L61 57 L66 76 L50 65 L34 76 L39 57 L24 45 L43 44 Z' fill='%23faf5ee'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#faf5ee; --paper:#fffdfa; --ink:#332a23; --soft:#6f6459; --muted:#8c7d6b;
+    --cream:#faf5ee; --paper:#fffdfa; --ink:#332a23; --soft:#6f6459; --muted:#7a6c5a;
     --card:#ffffff; --rose:#c1715a; --rose-2:#d98c73; --rose-soft:#f6e4da; --gold:#c99a57;
     --line:#ece2d6; --shadow:0 8px 30px rgba(120,80,55,.09);
   }
@@ -291,7 +292,7 @@
 </div>
 
 <script>
-const state = { filter:'all', threshold:1.5, airports:{DFW:true,DAL:false},
+const state = { filter:'all', threshold:1.5, miles:85000, airports:{DFW:true,DAL:false},
   watching:new Set(['London','Rome','Buenos Aires','Sydney','Tokyo','Madrid','Cancún','Miami']) };
 const MOCK_DEALS = [
   { dest:'London',       code:'LHR', dates:'Nov 12 – 19', cash:685,  miles:30000, fees:85,  carrier:'AA' },
@@ -338,7 +339,10 @@ function render(){
     .sort((a,b)=> a.vd==='cash'? 1 : b.v-a.v);
   feed.innerHTML = rows.map(({d,v,vd},i)=>{
     const badge = vd==='sweet'?'<span class="badge sweet">Sweet spot</span>': vd==='good'?'<span class="badge good">Good value</span>':'<span class="badge cash">Cash is king</span>';
-    const rec = vd==='cash'?'Just <b>pay cash</b> — miles aren\'t worth it here.':'Best move: <b>book with miles</b> ('+v.toFixed(2)+'¢ each).';
+    const afford = d.miles <= state.miles;
+    const rec = vd==='cash' ? 'Just <b>pay cash</b> — miles aren\'t worth it here.'
+      : afford ? 'Best move: <b>book with miles</b> ('+v.toFixed(2)+'¢ each).'
+      : 'Great with miles ('+v.toFixed(2)+'¢) — but you\'re <b>'+Math.ceil((d.miles-state.miles)/1000)+'k short</b> right now.';
     return `<div class="card ${vd==='sweet'?'sweet':''}" style="--i:${i}">
       <div class="ctop"><div><div class="dest">${d.dest}</div>
         <div class="route">${home().split('/')[0]} → ${d.code} · ${d.carrier}</div>
@@ -357,10 +361,12 @@ function buildSheet(){
   document.getElementById('airports').innerHTML = Object.keys(state.airports).map(a=>chip(a,state.airports[a])).join('');
   document.getElementById('dests').innerHTML = DEALS.map(d=>chip(d.dest,state.watching.has(d.dest))).join('');
   document.getElementById('thr').value=state.threshold; document.getElementById('thrv').textContent=state.threshold.toFixed(1)+'¢';
+  document.getElementById('pts').value=state.miles.toLocaleString();
 }
 document.getElementById('airports').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;state.airports[c.dataset.v]=!state.airports[c.dataset.v];c.classList.toggle('on');boot();});
 document.getElementById('dests').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;const d=c.dataset.v;state.watching.has(d)?state.watching.delete(d):state.watching.add(d);c.classList.toggle('on');boot();});
 document.getElementById('thr').addEventListener('input',e=>{state.threshold=parseFloat(e.target.value);document.getElementById('thrv').textContent=state.threshold.toFixed(1)+'¢';render();});
+document.getElementById('pts').addEventListener('input',e=>{ state.miles=parseInt((e.target.value||'').replace(/[^0-9]/g,''),10)||0; render(); });
 document.getElementById('tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');state.filter=t.dataset.f;render();});
 function openSheet(){buildSheet();document.getElementById('sheet').classList.add('on');document.getElementById('scrim').classList.add('on');}
 function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('scrim').classList.remove('on');}
