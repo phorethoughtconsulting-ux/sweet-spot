@@ -1,0 +1,16 @@
+{
+  "name": "Sweet Spot",
+  "short_name": "Sweet Spot",
+  "description": "Court's flight-deal radar — American + Oneworld out of Dallas, in cash and miles.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf5ee",
+  "theme_color": "#faf5ee",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#faf5ee">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sweet Spot">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Sweet Spot · Court</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="Sweet Spot — Court's personal flight-deal radar: American + Oneworld out of Dallas, watching cash and miles for the moment it's worth going.">
@@ -87,6 +92,18 @@
 
   .foot{ text-align:center; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:34px; letter-spacing:.5px; line-height:1.9 }
   .foot b{ color:var(--rose) }
+
+  /* ── craft: quiet entrance reveal + finish touches ── */
+  @keyframes ssRise{ from{ opacity:0; transform:translateY(16px) } to{ opacity:1; transform:none } }
+  .feed .card{ animation:ssRise .55s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--i,0) * 55ms) }
+  .pick .go{ transition:color .2s ease } .pick .go .ar{ display:inline-block; transition:transform .2s ease }
+  .pick .go:hover{ color:var(--rose-2) } .pick .go:hover .ar{ transform:translateX(4px) }
+  .card.sweet .dest::after{ content:"✦"; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--rose); margin-left:8px; vertical-align:2px; opacity:.75 }
+  /* proper empty state (not a reused footer line) */
+  .empty{ grid-column:1/-1; text-align:center; padding:56px 20px 42px }
+  .empty .g{ font-size:38px; color:var(--rose); opacity:.4; font-family:'DM Sans',sans-serif }
+  .empty h4{ font-family:'Fraunces',serif; font-weight:500; font-size:23px; margin:12px 0 6px; color:var(--ink) }
+  .empty p{ color:var(--soft); font-size:14px; max-width:360px; margin:0 auto; line-height:1.6 }
 
   /* settings — modal on desktop, bottom sheet on phone */
   .scrim{ position:fixed; inset:0; background:rgba(60,40,30,.32); backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:.22s; z-index:40 }
@@ -203,10 +220,10 @@ function render(){
   const rows = DEALS.filter(d=>state.watching.has(d.dest)).map(d=>({d,v:value(d),vd:verdict(d)}))
     .filter(x=> state.filter==='sweet'?x.vd==='sweet': state.filter==='cash'?x.vd==='cash':true)
     .sort((a,b)=> a.vd==='cash'? 1 : b.v-a.v);
-  feed.innerHTML = rows.map(({d,v,vd})=>{
+  feed.innerHTML = rows.map(({d,v,vd},i)=>{
     const badge = vd==='sweet'?'<span class="badge sweet">Sweet spot</span>': vd==='good'?'<span class="badge good">Good value</span>':'<span class="badge cash">Cash is king</span>';
     const rec = vd==='cash'?'Just <b>pay cash</b> — miles aren\'t worth it here.':'Best move: <b>book with miles</b> ('+v.toFixed(2)+'¢ each).';
-    return `<div class="card ${vd==='sweet'?'sweet':''}">
+    return `<div class="card ${vd==='sweet'?'sweet':''}" style="--i:${i}">
       <div class="ctop"><div><div class="dest">${d.dest}</div>
         <div class="route">${home().split('/')[0]} → ${d.code} · ${d.carrier}</div>
         <div class="dates">${d.dates} · round trip</div></div>${badge}</div>
@@ -215,9 +232,9 @@ function render(){
         <div><div class="k">Miles</div><div class="v">${d.miles/1000}k <span class="u">+ $${d.fees}</span></div></div>
         <div class="val"><div class="k">Value</div><div class="v">${v.toFixed(1)}<span class="u">¢/mi</span></div></div>
       </div>
-      <div class="pick"><div class="rec">${rec}</div><a class="go" href="${bookLink(d)}" target="_blank" rel="noopener">Book →</a></div>
+      <div class="pick"><div class="rec">${rec}</div><a class="go" href="${bookLink(d)}" target="_blank" rel="noopener">Book <span class="ar">→</span></a></div>
     </div>`;
-  }).join('') || `<div class="foot" style="grid-column:1/-1;margin-top:30px">Nothing matches this filter yet — loosen your "worth it" bar in settings.</div>`;
+  }).join('') || `<div class="empty"><div class="g">✦</div><h4>No sweet spots yet</h4><p>Nothing matches this filter right now — loosen your "worth it" bar in settings and they'll show up here.</p></div>`;
 }
 const chip=(t,on)=>`<div class="chip ${on?'on':''}" role="button" tabindex="0" aria-pressed="${on}" data-v="${t}">${t}</div>`;
 function buildSheet(){
