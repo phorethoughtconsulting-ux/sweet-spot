@@ -139,7 +139,14 @@
   .u-block p{ font-size:14px; color:var(--soft); line-height:1.65 } .u-block p b{ color:var(--ink); font-weight:600 }
   .u-quote{ font-family:'Fraunces',serif; font-style:italic; font-size:16px; color:var(--ink); line-height:1.5 }
   .u-cta{ margin-top:24px; padding-top:18px; border-top:1px solid var(--line); font-family:'Fraunces',serif; font-size:16px; color:var(--rose) }
-  @media(max-width:640px){ .u-grid{ grid-template-columns:1fr } .update{ padding:24px 22px } }
+  /* free / cost / needed strip */
+  .u-plan{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:24px }
+  .u-col{ border:1px solid var(--line); border-radius:14px; padding:16px; background:var(--cream) }
+  .u-col.cost{ border-color:#eccdbe; background:var(--rose-soft) }
+  .u-ch{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--rose); margin-bottom:11px }
+  .u-col ul{ list-style:none } .u-col li{ font-size:13px; color:var(--soft); padding:5px 0 5px 18px; position:relative; line-height:1.45 } .u-col li b{ color:var(--ink); font-weight:600 }
+  .u-col li::before{ content:'✓'; position:absolute; left:0; top:5px; color:var(--rose); font-size:11px }
+  @media(max-width:640px){ .u-grid{ grid-template-columns:1fr } .u-plan{ grid-template-columns:1fr } .update{ padding:24px 22px } }
 
   /* settings — modal on desktop, bottom sheet on phone */
   .scrim{ position:fixed; inset:0; background:rgba(60,40,30,.32); backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:.22s; z-index:40 }
@@ -233,12 +240,35 @@
         <div class="u-lbl">What's next</div>
         <p>Turn on <b>real, live deals</b> — plus a ping the moment a good one shows up on your routes. It checks a few times a day; good trips stick around long enough that you won't miss them.</p>
       </div>
-      <div class="u-block">
-        <div class="u-lbl">What it costs</div>
-        <p>The build is on me — this one's yours. To switch on the live deals it uses one service, <b>about $10 a month</b>, cancel anytime. The app, the hosting, and the alerts are all free.</p>
+    </div>
+    <div class="u-plan">
+      <div class="u-col">
+        <div class="u-ch">Free — you already have</div>
+        <ul>
+          <li>The app — built &amp; <b>yours</b></li>
+          <li>Installs on your phone</li>
+          <li>Hosting, forever</li>
+          <li>The full experience (sample deals)</li>
+        </ul>
+      </div>
+      <div class="u-col cost">
+        <div class="u-ch">What it costs</div>
+        <ul>
+          <li><b>~$10 / month</b> — one service, for the <b>real, live deals</b> + alerts</li>
+          <li>Cancel anytime</li>
+          <li>That's the only cost</li>
+        </ul>
+      </div>
+      <div class="u-col">
+        <div class="u-ch">What's needed to go live</div>
+        <ul>
+          <li>Just the $10/mo above</li>
+          <li>I handle all the setup</li>
+          <li>You do nothing</li>
+        </ul>
       </div>
     </div>
-    <div class="u-cta">Want it live? Just say the word. — Phorethought</div>
+    <div class="u-cta">The build's on me — this one's yours. Want the live deals switched on? Just say the word. — Phorethought</div>
   </section>
   <div class="foot">Sweet Spot for Court · built by Phorethought · You think it, we create it.</div>
   </div><!-- /.main -->
