@@ -130,6 +130,17 @@
   .empty h4{ font-family:'Fraunces',serif; font-weight:500; font-size:23px; margin:12px 0 6px; color:var(--ink) }
   .empty p{ color:var(--soft); font-size:14px; max-width:360px; margin:0 auto; line-height:1.6 }
 
+  /* ── project update (bottom) ── */
+  .update{ margin-top:42px; background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:30px 30px 26px; box-shadow:var(--shadow) }
+  .u-eyebrow{ font-family:'DM Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--rose); margin-bottom:20px; display:flex; align-items:center; gap:10px }
+  .u-eyebrow::before{ content:''; width:22px; height:1px; background:var(--rose) }
+  .u-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px 32px }
+  .u-lbl{ font-family:'Fraunces',serif; font-size:17px; color:var(--ink); margin-bottom:7px }
+  .u-block p{ font-size:14px; color:var(--soft); line-height:1.65 } .u-block p b{ color:var(--ink); font-weight:600 }
+  .u-quote{ font-family:'Fraunces',serif; font-style:italic; font-size:16px; color:var(--ink); line-height:1.5 }
+  .u-cta{ margin-top:24px; padding-top:18px; border-top:1px solid var(--line); font-family:'Fraunces',serif; font-size:16px; color:var(--rose) }
+  @media(max-width:640px){ .u-grid{ grid-template-columns:1fr } .update{ padding:24px 22px } }
+
   /* settings — modal on desktop, bottom sheet on phone */
   .scrim{ position:fixed; inset:0; background:rgba(60,40,30,.32); backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:.22s; z-index:40 }
   .scrim.on{ opacity:1; pointer-events:auto }
@@ -207,7 +218,29 @@
   </header>
 
   <div class="feed" id="feed"></div>
-  <div class="foot">Sample data — <b>lean mode</b>. Live free-tier sources plug in at Milestone 2.<br>Sweet Spot for Court · built by Phorethought</div>
+  <section class="update">
+    <div class="u-eyebrow">Where your build stands · from Phorethought</div>
+    <div class="u-grid">
+      <div class="u-block">
+        <div class="u-lbl">What you asked for</div>
+        <p class="u-quote">"I want alerts when there's a really low price — but for both how much it costs and how many points it is, specifically for American Airlines and its partners."</p>
+      </div>
+      <div class="u-block">
+        <div class="u-lbl">Where it is now</div>
+        <p>Built, and it's yours. Open it on your phone and add it to your home screen like a real app. Right now it's showing <b>sample deals</b> so you can see exactly how it'll work — set your miles, pick your destinations, and your "worth it" bar.</p>
+      </div>
+      <div class="u-block">
+        <div class="u-lbl">What's next</div>
+        <p>Turn on <b>real, live deals</b> — plus a ping the moment a good one shows up on your routes. It checks a few times a day; good trips stick around long enough that you won't miss them.</p>
+      </div>
+      <div class="u-block">
+        <div class="u-lbl">What it costs</div>
+        <p>The build is on me — this one's yours. To switch on the live deals it uses one service, <b>about $10 a month</b>, cancel anytime. The app, the hosting, and the alerts are all free.</p>
+      </div>
+    </div>
+    <div class="u-cta">Want it live? Just say the word. — Phorethought</div>
+  </section>
+  <div class="foot">Sweet Spot for Court · built by Phorethought · You think it, we create it.</div>
   </div><!-- /.main -->
 </div>
 
